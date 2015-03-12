@@ -69,13 +69,30 @@ Start a thread,let javascript runs in backgroud!
 
 ```js
   
-  // squ
-
-
-  var foo = {
-    bar: 2
+  // square.js
+  function square(number){
+    return number * number;
   }
+  
+  // controller.js
+  var foo = {
+    bar: 2,
+    getSquare: function(){
+      this.bar = square(this.bar);
+    },
+    printResult: function(){
+      console.log(this.bar);
+    }
+  }
+  
+  var worker = darkWalker({
+      uri : 'darkWalker.js',
+      data: foo,
+      deps: ['square.js']
+  });
 
+  // print:
+  // 4
 
 ```
 
