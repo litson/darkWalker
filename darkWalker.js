@@ -31,15 +31,17 @@
      * 调用时，如果存在worker实例，会立即终止该线程
      * @param  {[Object]} options [配置文件]
      *
-     *      deps:[], // 需要通过 importScripts 引入的脚本文件，会再第一时间加载
-     *      uri:'',  // worker文件的地址，也就是本文件的地址
-     *      data:{} || function, // 需要交给worker处理的数据，里面可保护对改数据的处理函数
+     *      deps: [], // 需要通过 importScripts 引入的脚本文件，会再第一时间加载
+     *      uri : '',  // worker文件的地址，也就是本文件的地址
+     *      data: {} || function, // 需要交给worker处理的数据，里面可保护对改数据的处理函数
      *                           // 也可以是个function
-     *      performs:[],
-     *                   // 数据（data）传输完毕后，需要执行的data中的处理函数的句柄
-     *                   // 可选 ，如不提供，默认为数据（data）中的所提供的函数。
-     *                   // 函数会按照给出的句柄顺序执行，并提供一个'next'函数句柄当作参数
-     *                   // 开发者可使用'next'来决定何时执行下一个函数
+     *      performs: [], // 数据（data）传输完毕后，需要执行的data中的处理函数的句柄
+     *                    // 可选 ，如不提供，默认为数据（data）中的所提供的函数。
+     *                    // 函数会按照给出的句柄顺序执行，并提供一个'next'函数句柄当作参数
+     *                    // 开发者可使用'next'来决定何时执行下一个函数
+     *      message: function(data, event) {...} // worker的onmessage
+     *      error  : function(errorEvent) {...}  // worker的onerror
+     *                   
      *
      *
      * @return {[Object]}         [将当前worker实例返回]
