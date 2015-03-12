@@ -1,7 +1,7 @@
 # darkWalker
 Start a thread,let javascript runs in backgroud!
 
-`controller.js`:
+### `controller.js`:
 
 ```js
 
@@ -25,7 +25,7 @@ Start a thread,let javascript runs in backgroud!
 
 ```
 
-多个函数？英文渣渣，Chinglish！
+### 多个函数？英文渣渣，Chinglish！
 
 ```js
 
@@ -65,6 +65,17 @@ Start a thread,let javascript runs in backgroud!
   
 ```
 
+### 线程中的依赖
+
+```js
+  
+  // squ
 
 
+  var foo = {
+    bar: 2
+  }
+
+
+```
 
