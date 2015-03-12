@@ -19,8 +19,7 @@
     // 如果是在worker中运行，启动onmessage捕获
     if (isInWorker) {
         eventCatcher();
-
-        // 否则向window作用域抛出 worker的包装函数
+    // 否则向window作用域抛出 worker的包装函数
     } else {
         window.darkWalker = darkWalker;
     }
@@ -88,21 +87,22 @@
      * [启动onmessge捕获]
      */
     function eventCatcher() {
-        return onmessage = function(event) {
+        return onmessage = function (event) {
             var options = event.data;
             var data = deserialize(options.data);
             var fns = [];
             // console.log(data);
-            // 
+
+            // 引入依赖
             if (options.deps.length) {
-                options.deps.forEach(function(uri) {
+                options.deps.forEach(function (uri) {
                     importScripts(uri);
                 });
-            };
+            }
 
             //
             if (!options.performs.length) {
-                options.performs = Object.keys(data).filter(function(key) {
+                options.performs = Object.keys(data).filter(function (key) {
                     var temp = data[key];
                     if (typeof temp === 'function') {
                         return key;
@@ -110,7 +110,7 @@
                 });
             }
 
-            options.performs.forEach(function(key) {
+            options.performs.forEach(function (key) {
                 var temp = data[key];
                 temp && fns.push(temp);
             });
@@ -131,12 +131,12 @@
         // 保证枚举时键值对是有序的
         var keys = Object.keys(data);
         var temp;
-        keys.forEach(function(key) {
-            var temp = data[key].toString();
+        keys.forEach(function (key) {
+            temp = data[key].toString();
             if (0 === temp.indexOf('function')) {
-                data[key] = (function(fnBody, context) {
+                data[key] = (function (fnBody, context) {
 
-                    return function() {
+                    return function () {
 
                         return eval('(' + fnBody + ')').apply(this, Array.prototype.slice.call(arguments));
 
