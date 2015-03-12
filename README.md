@@ -6,7 +6,7 @@ Start a thread,let javascript runs in backgroud!
 ```js
 
   var me = {
-    firstName: 'Toby',
+    firstName: 'Tobey',
     lastName : 'Zhang',
     getName  : function() {
         return this.firstName + '.' + this.lastName;
