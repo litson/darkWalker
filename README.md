@@ -96,3 +96,33 @@ Start a thread,let javascript runs in backgroud!
 
 ```
 
+### Methods
+
+```js
+
+  var worker = darkWalker({
+    uri : 'darkWalker.js',
+    data: function(){
+        postMessage('I am in worker!');
+    },
+    // An EventListener that is called when .... just like onmessage...
+    message: function(data, event) {
+      console.log(data);  // print : I am in worker!
+      console.log(event); // print : An MessageEvent Object
+    }
+    // An EventListener that is called when .... actually it's onerror in abstract worker.
+    error : function(errorEvent) {
+      console.log(errorEvent);
+    }
+    
+  });
+
+
+```
+
+
+
+
+
+
+
