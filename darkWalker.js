@@ -57,11 +57,25 @@
         worker.postMessage({
             deps: options.deps || [],
             performs: options.performs || [],
-            data: data
+            data: data,
+            observe: options.observe || []
         });
 
         worker.onmessage = function(event) {
-            options.message && options.message.call(this, event.data, event);
+            var result = event.data;
+            var temp;
+            if (getType(result) === 'object' && result['_i0705n_'] !== undefined) {
+                temp = result['_i0705n_'].split('_i0705n_');
+                temp = {
+                    key: temp[0],
+                    value: temp[1]
+                }
+                if (options.data[temp.key] !== undefined) {
+                    options.data[temp.key] = temp.value;
+                }
+            }
+
+            options.message && options.message.call(this, result, event);
         }
 
         worker.onerror = function(event) {
@@ -107,7 +121,6 @@
             var options = event.data;
             var data = deserialize(options.data);
             var fns = [];
-            // console.log(data);
 
             // 引入依赖
             if (options.deps.length) {
@@ -130,6 +143,27 @@
                 var temp = data[key];
                 temp && fns.push(temp);
             });
+
+            // 
+            if (options.observe.length) {
+                options.observe.forEach(function(key) {
+                    var temp = data[key];
+                    (temp !== undefined) && Object.defineProperty(data, key, {
+                        enumerable: true,
+                        configurable: true,
+                        get: function() {
+                            return temp;
+                        },
+                        set: function(value) {
+                            (value != temp) && postMessage({
+                                _i0705n_: [key, value].join('_i0705n_')
+                            });
+                            temp = value;
+                        }
+                    });
+                    data[key] = temp;
+                });
+            }
 
             // 
             (fns.length === 1) ? fns[0](): queue(fns);
@@ -185,5 +219,6 @@
      */
     function getType(object) {
         return Object.prototype.toString.call(object).replace(/\[\object|\]|\s/gi, '').toLowerCase();
-    }
+    };
+
 })();
