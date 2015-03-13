@@ -41,7 +41,6 @@
      *                    // 开发者可使用'next'来决定何时执行下一个函数
      *      message: function(data, event) {...} // worker的onmessage
      *      error  : function(errorEvent) {...}  // worker的onerror
-     *                   
      *
      *
      * @return {[Object]}         [将当前worker实例返回]
@@ -178,4 +177,13 @@
             }
         })();
     };
+
+    /**
+     * [getType description]
+     * @param  {[type]}  object [description]
+     * @return {Boolean}        [description]
+     */
+    function getType(object) {
+        return Object.prototype.toString.call(object).replace(/\[\object|\]|\s/gi, '').toLowerCase();
+    }
 })();
