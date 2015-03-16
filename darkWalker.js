@@ -124,9 +124,7 @@
 
             // 引入依赖
             if (options.deps.length) {
-                options.deps.forEach(function(uri) {
-                    importScripts(uri);
-                });
+                importScripts.apply(self, options.deps);
             }
 
             //
