@@ -15,6 +15,8 @@
 
     var DEBUG = true;
 
+    log();
+
     // 检测是否是在worker线程内运行
     var isInWorker = !!self.WorkerLocation;
 
@@ -55,6 +57,8 @@
             darkWalker.worker = new Worker(options.uri);
         } else {
             darkWalker.worker.terminate();
+            darkWalker.worker = null;
+            return darkWalker(options);
         }
 
         var worker = darkWalker.worker;
@@ -231,9 +235,10 @@
 
     /**
      * [Debugger]
+     *
      * @return {[type]} [description]
      */
-    function log( /* [type,], arg1, arg2...etc. */ ) {
+    function log( /* type [, arg1, arg2...etc. ]*/ ) {
         var args = Array.prototype.slice.call(arguments);
         var firstArg = args.shift();
         var isSpecified = !!~['warn', 'info', 'error'].indexOf(firstArg);
