@@ -13,11 +13,14 @@
 ;
 (function __dark_walker_package__() {
 
+    var DEBUG = true;
+
     // 检测是否是在worker线程内运行
     var isInWorker = !!self.WorkerLocation;
 
     // 如果是在worker中运行，启动onmessage捕获
     if (isInWorker) {
+        log('\n[已进入worker线程]\n');
         eventCatcher();
         // 否则向window作用域抛出 worker的包装函数
     } else {
@@ -46,6 +49,8 @@
      * @return {[Object]}         [将当前worker实例返回]
      */
     function darkWalker(options) {
+        log('\n[已进入主线程]\n');
+
         if (!darkWalker.worker) {
             darkWalker.worker = new Worker(options.uri);
         } else {
@@ -62,6 +67,8 @@
         });
 
         worker.onmessage = function(event) {
+            log('\n[主线程接受到数据，数据为：]\n', event.data);
+
             var result = event.data;
             var temp;
             if (getType(result) === 'object' && result['_i0705n_'] !== undefined) {
@@ -79,7 +86,9 @@
         }
 
         worker.onerror = function(event) {
+            log('warn', '\n[主线程遇到异常，异常信息：]\n', event.message);
             options.error && options.error.call(this, event);
+            event.preventDefault();
         }
 
         return worker;
@@ -118,6 +127,7 @@
      */
     function eventCatcher() {
         return onmessage = function(event) {
+            log('\n[在子线程内接收到数据，数据为]：\n', event.data);
             var options = event.data;
             var data = deserialize(options.data);
             var fns = [];
@@ -218,5 +228,17 @@
     function getType(object) {
         return Object.prototype.toString.call(object).replace(/\[\object|\]|\s/gi, '').toLowerCase();
     };
+
+    /**
+     * [Debugger]
+     * @return {[type]} [description]
+     */
+    function log( /* [type,], arg1, arg2...etc. */ ) {
+        var args = Array.prototype.slice.call(arguments);
+        var firstArg = args.shift();
+        var isSpecified = !!~['warn', 'info', 'error'].indexOf(firstArg);
+        return DEBUG && console[isSpecified ? firstArg : 'log'].apply(console, isSpecified ? args : arguments);
+    }
+
 
 })();
