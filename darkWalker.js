@@ -1,57 +1,57 @@
 /**
  *  Dark Walker
- *  Web Workerçš„æ¨¡æ‹Ÿåå°è¿è¡Œçš„å·¥å…·ç±»
+ *  Web WorkerµÄÄ£ÄâºóÌ¨ÔËĞĞµÄ¹¤¾ßÀà
  *
- *  ç¬¬ä¸€ç‰ˆåå­—å«åšbackgroudï¼Œæ„åœ¨è¡¨ç¤ºåœ¨åå°è¿è¡Œï¼Œ
- *  ä½†æ˜¯CSSå†™å¤šäº†ï¼Œè¿™ä¸ªåå­—æ€»è§‰å¾—å¾ˆåˆ«æ‰­ã€‚
+ *  µÚÒ»°æÃû×Ö½Ğ×öbackgroud£¬ÒâÔÚ±íÊ¾ÔÚºóÌ¨ÔËĞĞ£¬
+ *  µ«ÊÇCSSĞ´¶àÁË£¬Õâ¸öÃû×Ö×Ü¾õµÃºÜ±ğÅ¤¡£
  *
- *  æ”¹åä¸ºDark walkerï¼Œé»‘æš—ä¸­çš„è¡Œè€…
- *  è¡¨ç¤ºä»–æ‰€åšçš„æ“ä½œéƒ½åœ¨æš—ä¸­è¿›è¡Œï¼Œ
- *  walker å’Œ worker è°éŸ³ï¼Œå¼‚æ›²åŒå·¥ä¹‹å¦™
+ *  ¸ÄÃûÎªDark walker£¬ºÚ°µÖĞµÄĞĞÕß
+ *  ±íÊ¾ËûËù×öµÄ²Ù×÷¶¼ÔÚ°µÖĞ½øĞĞ£¬
+ *  walker ºÍ worker Ğ³Òô£¬ÒìÇúÍ¬¹¤Ö®Ãî
  *
  */
 ;
 (function __dark_walker_package__() {
 
-    var DEBUG = true;
+    var DEBUG = false;
 
-    log();
+    var SEPARATOR = '_i0705n_';
 
-    // æ£€æµ‹æ˜¯å¦æ˜¯åœ¨workerçº¿ç¨‹å†…è¿è¡Œ
+    // ¼ì²âÊÇ·ñÊÇÔÚworkerÏß³ÌÄÚÔËĞĞ
     var isInWorker = !!self.WorkerLocation;
 
-    // å¦‚æœæ˜¯åœ¨workerä¸­è¿è¡Œï¼Œå¯åŠ¨onmessageæ•è·
+    // Èç¹ûÊÇÔÚworkerÖĞÔËĞĞ£¬Æô¶¯onmessage²¶»ñ
     if (isInWorker) {
-        log('\n[å·²è¿›å…¥workerçº¿ç¨‹]\n');
+        log('\n[ÒÑ½øÈëworkerÏß³Ì]\n');
         eventCatcher();
-        // å¦åˆ™å‘windowä½œç”¨åŸŸæŠ›å‡º workerçš„åŒ…è£…å‡½æ•°
+        // ·ñÔòÏòwindow×÷ÓÃÓòÅ×³ö workerµÄ°ü×°º¯Êı
     } else {
         window.darkWalker = darkWalker;
+        window.getType = getType;
     }
 
 
     /**
-     * [åˆ›å»ºworkerçš„åŒ…è£…é›†]
-     * æ¯æ¬¡è°ƒç”¨å…±äº«åŒä¸€ä¸ªworkerå•ä¾‹ï¼Œ
-     * è°ƒç”¨æ—¶ï¼Œå¦‚æœå­˜åœ¨workerå®ä¾‹ï¼Œä¼šç«‹å³ç»ˆæ­¢è¯¥çº¿ç¨‹
-     * @param  {[Object]} options [é…ç½®æ–‡ä»¶]
+     * [´´½¨workerµÄ°ü×°¼¯]
+     * Ã¿´Îµ÷ÓÃ¹²ÏíÍ¬Ò»¸öworkerµ¥Àı£¬
+     * µ÷ÓÃÊ±£¬Èç¹û´æÔÚworkerÊµÀı£¬»áÁ¢¼´ÖÕÖ¹¸ÃÏß³Ì
+     * @param  {[Object]} options [ÅäÖÃÎÄ¼ş]
      *
-     *      deps: [], // éœ€è¦é€šè¿‡ importScripts å¼•å…¥çš„è„šæœ¬æ–‡ä»¶ï¼Œä¼šå†ç¬¬ä¸€æ—¶é—´åŠ è½½
-     *      uri : '',  // workeræ–‡ä»¶çš„åœ°å€ï¼Œä¹Ÿå°±æ˜¯æœ¬æ–‡ä»¶çš„åœ°å€
-     *      data: {} || function, // éœ€è¦äº¤ç»™workerå¤„ç†çš„æ•°æ®ï¼Œé‡Œé¢å¯ä¿æŠ¤å¯¹æ”¹æ•°æ®çš„å¤„ç†å‡½æ•°
-     *                           // ä¹Ÿå¯ä»¥æ˜¯ä¸ªfunction
-     *      performs: [], // æ•°æ®ï¼ˆdataï¼‰ä¼ è¾“å®Œæ¯•åï¼Œéœ€è¦æ‰§è¡Œçš„dataä¸­çš„å¤„ç†å‡½æ•°çš„å¥æŸ„
-     *                    // å¯é€‰ ï¼Œå¦‚ä¸æä¾›ï¼Œé»˜è®¤ä¸ºæ•°æ®ï¼ˆdataï¼‰ä¸­çš„æ‰€æä¾›çš„å‡½æ•°ã€‚
-     *                    // å‡½æ•°ä¼šæŒ‰ç…§ç»™å‡ºçš„å¥æŸ„é¡ºåºæ‰§è¡Œï¼Œå¹¶æä¾›ä¸€ä¸ª'next'å‡½æ•°å¥æŸ„å½“ä½œå‚æ•°
-     *                    // å¼€å‘è€…å¯ä½¿ç”¨'next'æ¥å†³å®šä½•æ—¶æ‰§è¡Œä¸‹ä¸€ä¸ªå‡½æ•°
-     *      message: function(data, event) {...} // workerçš„onmessage
-     *      error  : function(errorEvent) {...}  // workerçš„onerror
+     *      deps: [], // ĞèÒªÍ¨¹ı importScripts ÒıÈëµÄ½Å±¾ÎÄ¼ş£¬»áÔÙµÚÒ»Ê±¼ä¼ÓÔØ
+     *      uri : '',  // workerÎÄ¼şµÄµØÖ·£¬Ò²¾ÍÊÇ±¾ÎÄ¼şµÄµØÖ·
+     *      data: {} || function, // ĞèÒª½»¸øworker´¦ÀíµÄÊı¾İ£¬ÀïÃæ¿É±£»¤¶Ô¸ÄÊı¾İµÄ´¦Àíº¯Êı
+     *                           // Ò²¿ÉÒÔÊÇ¸öfunction
+     *      performs: [], // Êı¾İ£¨data£©´«ÊäÍê±Ïºó£¬ĞèÒªÖ´ĞĞµÄdataÖĞµÄ´¦Àíº¯ÊıµÄ¾ä±ú
+     *                    // ¿ÉÑ¡ £¬Èç²»Ìá¹©£¬Ä¬ÈÏÎªÊı¾İ£¨data£©ÖĞµÄËùÌá¹©µÄº¯Êı¡£
+     *                    // º¯Êı»á°´ÕÕ¸ø³öµÄ¾ä±úË³ĞòÖ´ĞĞ£¬²¢Ìá¹©Ò»¸ö'next'º¯Êı¾ä±úµ±×÷²ÎÊı
+     *                    // ¿ª·¢Õß¿ÉÊ¹ÓÃ'next'À´¾ö¶¨ºÎÊ±Ö´ĞĞÏÂÒ»¸öº¯Êı
+     *      message: function(data, event) {...} // workerµÄonmessage
+     *      error  : function(errorEvent) {...}  // workerµÄonerror
      *
      *
-     * @return {[Object]}         [å°†å½“å‰workerå®ä¾‹è¿”å›]
+     * @return {[Object]}         [½«µ±Ç°workerÊµÀı·µ»Ø]
      */
     function darkWalker(options) {
-        log('\n[å·²è¿›å…¥ä¸»çº¿ç¨‹]\n');
 
         if (!darkWalker.worker) {
             darkWalker.worker = new Worker(options.uri);
@@ -61,8 +61,17 @@
             return darkWalker(options);
         }
 
+        log('group', '\n[================== µ÷ÊÔĞÅÏ¢ ==================]\n');
+
         var worker = darkWalker.worker;
         var data = serializeData(options.data);
+
+        // if (options.observe.length) {
+        //     options.observe.forEach(function(item, index) {
+        //         options.observe[index] = [item, SEPARATOR, typeof(item)].join('');
+        //     });
+        // }
+
         worker.postMessage({
             deps: options.deps || [],
             performs: options.performs || [],
@@ -71,26 +80,35 @@
         });
 
         worker.onmessage = function(event) {
-            log('\n[ä¸»çº¿ç¨‹æ¥å—åˆ°æ•°æ®ï¼Œæ•°æ®ä¸ºï¼š]\n', event.data);
+            // log('\n[Ö÷Ïß³Ì½ÓÊÜµ½Êı¾İ£¬Êı¾İÎª£º]\n', event.data);
+
+            log('group', '\n[Ö÷Ïß³Ì½ÓÊÜµ½Êı¾İ£¬Êı¾İÎª£º]\n');
+            log(event.data);
+            log('groupEnd');
+            log('groupEnd');
 
             var result = event.data;
             var temp;
-            if (getType(result) === 'object' && result['_i0705n_'] !== undefined) {
-                temp = result['_i0705n_'].split('_i0705n_');
+            if (getType(result) === 'object' && result[SEPARATOR] !== undefined) {
+                temp = result[SEPARATOR].split(SEPARATOR);
+
                 temp = {
                     key: temp[0],
-                    value: temp[1]
+                    value: temp[1] //,
+                        // type: temp[2]
                 }
-                if (options.data[temp.key] !== undefined) {
-                    options.data[temp.key] = temp.value;
-                }
-            }
 
-            options.message && options.message.call(this, result, event);
+                // if (options.data[temp.key] !== undefined) {
+                options.data[temp.key] = temp.value;
+                // }
+            } else {
+                options.message && options.message.call(this, result, event);
+            }
         }
 
         worker.onerror = function(event) {
-            log('warn', '\n[ä¸»çº¿ç¨‹é‡åˆ°å¼‚å¸¸ï¼Œå¼‚å¸¸ä¿¡æ¯ï¼š]\n', event.message);
+            log('warn', '\n[Ö÷Ïß³ÌÓöµ½Òì³££¬Òì³£ĞÅÏ¢£º]\n', event.message);
+            log('groupEnd');
             options.error && options.error.call(this, event);
             event.preventDefault();
         }
@@ -99,13 +117,13 @@
     };
 
     /**
-     * [åºåˆ—åŒ–æ•°æ®]
-     * å› ä¸ºä¼ è¾“çš„dataä¸­å¦‚æœæœ‰å‡½æ•°è¡¨è¾¾å¼ï¼Œ
-     * workerä¼šæŠ¥é”™ï¼›
-     * å¦‚æœä½¿ç”¨JSON.stringifyç›´æ¥åºåˆ—åŒ–
-     * å‡½æ•°è¡¨è¾¾å¼åˆ™ä¼šä¸¢å¤±
-     * @param  {[Object]} data [éœ€è¦åºåˆ—åŒ–çš„æ•°æ®]
-     * @return {[String]}      [åºåˆ—åŒ–åçš„æ•°æ®]
+     * [ĞòÁĞ»¯Êı¾İ]
+     * ÒòÎª´«ÊäµÄdataÖĞÈç¹ûÓĞº¯Êı±í´ïÊ½£¬
+     * worker»á±¨´í£»
+     * Èç¹ûÊ¹ÓÃJSON.stringifyÖ±½ÓĞòÁĞ»¯
+     * º¯Êı±í´ïÊ½Ôò»á¶ªÊ§
+     * @param  {[Object]} data [ĞèÒªĞòÁĞ»¯µÄÊı¾İ]
+     * @return {[String]}      [ĞòÁĞ»¯ºóµÄÊı¾İ]
      */
     function serializeData(data) {
 
@@ -127,16 +145,20 @@
     };
 
     /**
-     * [å¯åŠ¨onmessgeæ•è·]
+     * [Æô¶¯onmessge²¶»ñ]
      */
     function eventCatcher() {
         return onmessage = function(event) {
-            log('\n[åœ¨å­çº¿ç¨‹å†…æ¥æ”¶åˆ°æ•°æ®ï¼Œæ•°æ®ä¸º]ï¼š\n', event.data);
+            // log('group', '\n[ÔÚ×ÓÏß³ÌÄÚ½ÓÊÕµ½Êı¾İ£¬Êı¾İÎª]£º\n');
+            // log(event.data);
+            // log('groupEnd');
+
+            log('\n[ÔÚ×ÓÏß³ÌÄÚ½ÓÊÕµ½Êı¾İ£¬Êı¾İÎª]£º\n', event.data);
             var options = event.data;
-            var data = deserialize(options.data);
+            var data = deSerialize(options.data);
             var fns = [];
 
-            // å¼•å…¥ä¾èµ–
+            // ÒıÈëÒÀÀµ
             if (options.deps.length) {
                 importScripts.apply(self, options.deps);
             }
@@ -158,22 +180,30 @@
 
             // 
             if (options.observe.length) {
-                options.observe.forEach(function(key) {
-                    var temp = data[key];
-                    (temp !== undefined) && Object.defineProperty(data, key, {
+
+                options.observe.forEach(function(originalProp) {
+                    // var originalProp = originalProp.split(SEPARATOR);
+                    var key = originalProp; // [0];
+                    // var type = originalProp[1];
+                    var val = data[key];
+                    // if (val !== undefined) {
+                    data['_' + key] = val;
+                    Object.defineProperty(data, key, {
                         enumerable: true,
                         configurable: true,
                         get: function() {
-                            return temp;
+                            return this['_' + key];
                         },
-                        set: function(value) {
-                            (value != temp) && postMessage({
-                                _i0705n_: [key, value].join('_i0705n_')
-                            });
-                            temp = value;
+                        set: function(newVal) {
+                            if (newVal !== val) {
+                                var extra = {};
+                                extra[SEPARATOR] = [key, newVal].join(SEPARATOR);
+                                postMessage(extra);
+                            }
+                            this['_' + key] = newVal;
                         }
                     });
-                    data[key] = temp;
+                    // }
                 });
             }
 
@@ -183,14 +213,14 @@
     };
 
     /**
-     * [å¯¹å·²ç»åºåˆ—åŒ–çš„æ•°æ®è§£ç ]
-     * ä¸»è¦å¯¹å‡½æ•°è¿›è¡Œè§£ç æ“ä½œï¼Œç»‘å®šæ­£ç¡®çš„ä½œç”¨åŸŸã€‚
-     * @param  {[String]} dataString [åºåˆ—åŒ–çš„å­—ç¬¦ä¸²]
-     * @return {[Object]}            [è§£ç åçš„å¯¹è±¡å­—é¢é‡]
+     * [¶ÔÒÑ¾­ĞòÁĞ»¯µÄÊı¾İ½âÂë]
+     * Ö÷Òª¶Ôº¯Êı½øĞĞ½âÂë²Ù×÷£¬°ó¶¨ÕıÈ·µÄ×÷ÓÃÓò¡£
+     * @param  {[String]} dataString [ĞòÁĞ»¯µÄ×Ö·û´®]
+     * @return {[Object]}            [½âÂëºóµÄ¶ÔÏó×ÖÃæÁ¿]
      */
-    function deserialize(dataString) {
+    function deSerialize(dataString) {
         var data = JSON.parse(dataString);
-        // ä¿è¯æšä¸¾æ—¶é”®å€¼å¯¹æ˜¯æœ‰åºçš„
+        // ±£Ö¤Ã¶¾ÙÊ±¼üÖµ¶ÔÊÇÓĞĞòµÄ
         var keys = Object.keys(data);
         var temp;
         keys.forEach(function(key) {
@@ -211,9 +241,9 @@
     };
 
     /**
-     * [é˜Ÿåˆ—å‡½æ•°]
-     * @param  {[Array]} fns     [å‡½æ•°é˜Ÿåˆ—]
-     * @param  {[Object]} context [å‡½æ•°çš„æ‰§è¡Œä¸Šä¸‹æ–‡]
+     * [¶ÓÁĞº¯Êı]
+     * @param  {[Array]} fns     [º¯Êı¶ÓÁĞ]
+     * @param  {[Object]} context [º¯ÊıµÄÖ´ĞĞÉÏÏÂÎÄ]
      */
     function queue(fns, context) {
         (function next() {
@@ -241,9 +271,35 @@
     function log( /* type [, arg1, arg2...etc. ]*/ ) {
         var args = Array.prototype.slice.call(arguments);
         var firstArg = args.shift();
-        var isSpecified = !!~['warn', 'info', 'error'].indexOf(firstArg);
+        var isSpecified = !!~['warn', 'info', 'error', 'group', 'groupEnd'].indexOf(firstArg);
         return DEBUG && console[isSpecified ? firstArg : 'log'].apply(console, isSpecified ? args : arguments);
     }
 
+    /**
+     * [parseType description]
+     * @param  {[type]} type [description]
+     * @return {[type]}      [description]
+     */
+    function parseType(type, val) {
+        var result = val;
+        switch (type) {
+            case 'number':
+                // NaN Infinity Floats Ints
+                result = 1 * result;
+                break;
+            case 'boolean':
+                result = result === 'true' ? true : false;
+                break;
+            case 'null':
+                result = null;
+                break;
+            case 'undefined':
+                result = undefined;
+                break;
+            default:
+                break;
+        }
+        return result;
+    }
 
 })();
