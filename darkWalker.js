@@ -27,7 +27,6 @@
         // 否则向window作用域抛出 worker的包装函数
     } else {
         window.darkWalker = darkWalker;
-        window.getType = getType;
     }
 
 
@@ -65,12 +64,6 @@
 
         var worker = darkWalker.worker;
         var data = serializeData(options.data);
-
-        // if (options.observe.length) {
-        //     options.observe.forEach(function(item, index) {
-        //         options.observe[index] = [item, SEPARATOR, typeof(item)].join('');
-        //     });
-        // }
 
         worker.postMessage({
             deps: options.deps || [],
@@ -149,11 +142,8 @@
      */
     function eventCatcher() {
         return onmessage = function(event) {
-            // log('group', '\n[在子线程内接收到数据，数据为]：\n');
-            // log(event.data);
-            // log('groupEnd');
-
             log('\n[在子线程内接收到数据，数据为]：\n', event.data);
+
             var options = event.data;
             var data = deSerialize(options.data);
             var fns = [];
@@ -163,15 +153,17 @@
                 importScripts.apply(self, options.deps);
             }
 
-            //
-            if (!options.performs.length) {
-                options.performs = Object.keys(data).filter(function(key) {
-                    var temp = data[key];
-                    if (typeof temp === 'function') {
-                        return key;
-                    }
-                });
-            }
+            // 
+            // <del>如果没有提供需要执行的函数句柄，默认全部执行</del>
+            // update note：这个功能没什么用，去掉
+            // if (!options.performs.length) {
+            //     options.performs = Object.keys(data).filter(function(key) {
+            //         var temp = data[key];
+            //         if (typeof temp === 'function') {
+            //             return key;
+            //         }
+            //     });
+            // }
 
             options.performs.forEach(function(key) {
                 var temp = data[key];
@@ -180,13 +172,9 @@
 
             // 
             if (options.observe.length) {
-
                 options.observe.forEach(function(originalProp) {
-                    // var originalProp = originalProp.split(SEPARATOR);
-                    var key = originalProp; // [0];
-                    // var type = originalProp[1];
+                    var key = originalProp;
                     var val = data[key];
-                    // if (val !== undefined) {
                     data['_' + key] = val;
                     Object.defineProperty(data, key, {
                         enumerable: true,
@@ -203,12 +191,11 @@
                             this['_' + key] = newVal;
                         }
                     });
-                    // }
+
                 });
             }
 
-            // 
-            (fns.length === 1) ? fns[0](): queue(fns);
+            (fns.length) && ((fns.length === 1) ? fns[0]() : queue(fns));
         }
     };
 
