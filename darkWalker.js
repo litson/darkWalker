@@ -13,7 +13,7 @@
 ;
 (function __dark_walker_package__() {
 
-    var DEBUG = !0;
+    var DEBUG = false;
 
     var SEPARATOR = '_i0705n_';
 
@@ -105,6 +105,8 @@
             options.error && options.error.call(this, event);
             event.preventDefault();
         }
+
+        DEBUG = typeof(options.DEBUG) === 'undefined' ? false : !0;
 
         return worker;
     };
