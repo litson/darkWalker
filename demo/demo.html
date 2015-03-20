@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="gbk">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>darkWalker testbed</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src='http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.js'></script>
+    <script src='http://cdn.staticfile.org/vue/0.11.0-rc3/vue.js'></script>
+    <script src='../darkWalker.js'></script>
+    <style>
+    .container {
+        margin-top: 50px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <p>
+            <label>
+                <input type="checkbox" checked id='ckd'> worker
+            </label>
+        </p>
+        <p>
+            <input type="file" id='uploadHandler'>
+        </p>
+        <pre id="result">
+           读取一个文件花费了： {{result}}
+        </pre>
+    </div>
+    <script>
+    $(function() {
+
+        var root = window;
+
+        var $uploader = $('#uploadHandler');
+        var $result = $('#result');
+        var $checkbox = $('#ckd');
+
+        var data = {
+            url: '',
+            result: '',
+            getData: function() {
+                var _self = this;
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', _self.url, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        _self.result = (+new Date) - _self.begin;
+
+                        try {
+                            clearValue();
+                        } catch (e) {
+                            postMessage('clearValue');
+                        }
+
+                        //console.log();
+
+                        // _self.result = xhr.response;
+                    }
+                };
+                xhr.send();
+            },
+            callBack: function() {
+                var _self = this;
+                _self.getData();
+                // for (var i = 0; i < 1000000; i++) {
+                //     _self.result = i;
+                // }
+            }
+        };
+
+        var vm = new Vue({
+            el: 'body',
+            data: data
+        });
+
+        function clearValue() {
+            $uploader.val('');
+        }
+
+
+        $uploader.on('change', function(event) {
+            var file = this.files[0];
+            var self = this;
+
+            data.url = getBlob(file);
+            data.begin = +new Date;
+
+            if ($checkbox.prop('checked')) {
+                darkWalker({
+                    uri: '../darkWalker.js',
+                    data: data,
+                    performs: ['callBack'],
+                    observe: ['result'],
+                    message: function(data) {
+                        if (data == 'clearValue') {
+                            clearValue();
+                        }
+                    }
+                });
+            } else {
+                data.callBack();
+            }
+
+
+
+        });
+
+        /**
+         * [getBlob description]
+         * @param  {[type]} file [description]
+         * @return {[type]}      [description]
+         */
+        function getBlob(file) {
+            var URL = root.URL || root.webkitURL;
+            return URL.createObjectURL(file);
+        }
+    });
+    </script>
+</body>
+
+</html>
