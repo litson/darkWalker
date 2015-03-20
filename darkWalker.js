@@ -13,7 +13,7 @@
 ;
 (function __dark_walker_package__() {
 
-    var DEBUG = false;
+    var DEBUG = !0;
 
     var SEPARATOR = '_i0705n_';
 
@@ -32,16 +32,16 @@
 
     /**
      * [创建worker的包装集]
-     * 每次调用共享同一个worker单例，
-     * 调用时，如果存在worker实例，会立即终止该线程
+     * 
+     * 调用时，如果存在worker实例，会终止并重启一个新的线程。
      * @param  {[Object]} options [配置文件]
      *
      *      deps: [], // 需要通过 importScripts 引入的脚本文件，会再第一时间加载
      *      uri : '',  // worker文件的地址，也就是本文件的地址
-     *      data: {} || function, // 需要交给worker处理的数据，里面可保护对改数据的处理函数
-     *                           // 也可以是个function
+     *      data: {} || function, // 需要交给worker处理的数据，里面可保护数据中的处理函数
+     *                            // 也可以是个function，当为函数时，默认线程创建完毕立即执行
      *      performs: [], // 数据（data）传输完毕后，需要执行的data中的处理函数的句柄
-     *                    // 可选 ，如不提供，默认为数据（data）中的所提供的函数。
+     *                    // 可选 
      *                    // 函数会按照给出的句柄顺序执行，并提供一个'next'函数句柄当作参数
      *                    // 开发者可使用'next'来决定何时执行下一个函数
      *      message: function(data, event) {...} // worker的onmessage
@@ -288,5 +288,4 @@
         }
         return result;
     }
-
 })();
