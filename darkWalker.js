@@ -1,13 +1,13 @@
 /**
  *  Dark Walker
- *  Web WorkerµÄÄ£ÄâºóÌ¨ÔËĞĞµÄ¹¤¾ßÀà
+ *  Web Workerçš„æ¨¡æ‹Ÿåå°è¿è¡Œçš„å·¥å…·ç±»
  *
- *  µÚÒ»°æÃû×Ö½Ğ×öbackgroud£¬ÒâÔÚ±íÊ¾ÔÚºóÌ¨ÔËĞĞ£¬
- *  µ«ÊÇCSSĞ´¶àÁË£¬Õâ¸öÃû×Ö×Ü¾õµÃºÜ±ğÅ¤¡£
+ *  ç¬¬ä¸€ç‰ˆåå­—å«åšbackgroudï¼Œæ„åœ¨è¡¨ç¤ºåœ¨åå°è¿è¡Œï¼Œ
+ *  ä½†æ˜¯CSSå†™å¤šäº†ï¼Œè¿™ä¸ªåå­—æ€»è§‰å¾—å¾ˆåˆ«æ‰­ã€‚
  *
- *  ¸ÄÃûÎªDark walker£¬ºÚ°µÖĞµÄĞĞÕß
- *  ±íÊ¾ËûËù×öµÄ²Ù×÷¶¼ÔÚ°µÖĞ½øĞĞ£¬
- *  walker ºÍ worker Ğ³Òô£¬ÒìÇúÍ¬¹¤Ö®Ãî
+ *  æ”¹åä¸ºDark walkerï¼Œé»‘æš—ä¸­çš„è¡Œè€…
+ *  è¡¨ç¤ºä»–æ‰€åšçš„æ“ä½œéƒ½åœ¨æš—ä¸­è¿›è¡Œï¼Œ
+ *  walker å’Œ worker è°éŸ³ï¼Œå¼‚æ›²åŒå·¥ä¹‹å¦™
  *
  */
 ;
@@ -17,38 +17,38 @@
 
     var SEPARATOR = '_i0705n_';
 
-    // ¼ì²âÊÇ·ñÊÇÔÚworkerÏß³ÌÄÚÔËĞĞ
+    // æ£€æµ‹æ˜¯å¦æ˜¯åœ¨workerçº¿ç¨‹å†…è¿è¡Œ
     var isInWorker = !!self.WorkerLocation;
 
-    // Èç¹ûÊÇÔÚworkerÖĞÔËĞĞ£¬Æô¶¯onmessage²¶»ñ
+    // å¦‚æœæ˜¯åœ¨workerä¸­è¿è¡Œï¼Œå¯åŠ¨onmessageæ•è·
     if (isInWorker) {
-        log('\n[ÒÑ½øÈëworkerÏß³Ì]\n');
+        log('\n[å·²è¿›å…¥workerçº¿ç¨‹]\n');
         eventCatcher();
-        // ·ñÔòÏòwindow×÷ÓÃÓòÅ×³ö workerµÄ°ü×°º¯Êı
+        // å¦åˆ™å‘windowä½œç”¨åŸŸæŠ›å‡º workerçš„åŒ…è£…å‡½æ•°
     } else {
         window.darkWalker = darkWalker;
     }
 
 
     /**
-     * [´´½¨workerµÄ°ü×°¼¯]
-     * 
-     * µ÷ÓÃÊ±£¬Èç¹û´æÔÚworkerÊµÀı£¬»áÖÕÖ¹²¢ÖØÆôÒ»¸öĞÂµÄÏß³Ì¡£
-     * @param  {[Object]} options [ÅäÖÃÎÄ¼ş]
+     * [åˆ›å»ºworkerçš„åŒ…è£…é›†]
      *
-     *      deps: [], // ĞèÒªÍ¨¹ı importScripts ÒıÈëµÄ½Å±¾ÎÄ¼ş£¬»áÔÙµÚÒ»Ê±¼ä¼ÓÔØ
-     *      uri : '',  // workerÎÄ¼şµÄµØÖ·£¬Ò²¾ÍÊÇ±¾ÎÄ¼şµÄµØÖ·
-     *      data: {} || function, // ĞèÒª½»¸øworker´¦ÀíµÄÊı¾İ£¬ÀïÃæ¿É±£»¤Êı¾İÖĞµÄ´¦Àíº¯Êı
-     *                            // Ò²¿ÉÒÔÊÇ¸öfunction£¬µ±Îªº¯ÊıÊ±£¬Ä¬ÈÏÏß³Ì´´½¨Íê±ÏÁ¢¼´Ö´ĞĞ
-     *      performs: [], // Êı¾İ£¨data£©´«ÊäÍê±Ïºó£¬ĞèÒªÖ´ĞĞµÄdataÖĞµÄ´¦Àíº¯ÊıµÄ¾ä±ú
-     *                    // ¿ÉÑ¡ 
-     *                    // º¯Êı»á°´ÕÕ¸ø³öµÄ¾ä±úË³ĞòÖ´ĞĞ£¬²¢Ìá¹©Ò»¸ö'next'º¯Êı¾ä±úµ±×÷²ÎÊı
-     *                    // ¿ª·¢Õß¿ÉÊ¹ÓÃ'next'À´¾ö¶¨ºÎÊ±Ö´ĞĞÏÂÒ»¸öº¯Êı
-     *      message: function(data, event) {...} // workerµÄonmessage
-     *      error  : function(errorEvent) {...}  // workerµÄonerror
+     * è°ƒç”¨æ—¶ï¼Œå¦‚æœå­˜åœ¨workerå®ä¾‹ï¼Œä¼šç»ˆæ­¢å¹¶é‡å¯ä¸€ä¸ªæ–°çš„çº¿ç¨‹ã€‚
+     * @param  {[Object]} options [é…ç½®æ–‡ä»¶]
+     *
+     *      deps: [], // éœ€è¦é€šè¿‡ importScripts å¼•å…¥çš„è„šæœ¬æ–‡ä»¶ï¼Œä¼šå†ç¬¬ä¸€æ—¶é—´åŠ è½½
+     *      uri : '',  // workeræ–‡ä»¶çš„åœ°å€ï¼Œä¹Ÿå°±æ˜¯æœ¬æ–‡ä»¶çš„åœ°å€
+     *      data: {} || function, // éœ€è¦äº¤ç»™workerå¤„ç†çš„æ•°æ®ï¼Œé‡Œé¢å¯ä¿æŠ¤æ•°æ®ä¸­çš„å¤„ç†å‡½æ•°
+     *                            // ä¹Ÿå¯ä»¥æ˜¯ä¸ªfunctionï¼Œå½“ä¸ºå‡½æ•°æ—¶ï¼Œé»˜è®¤çº¿ç¨‹åˆ›å»ºå®Œæ¯•ç«‹å³æ‰§è¡Œ
+     *      performs: [], // æ•°æ®ï¼ˆdataï¼‰ä¼ è¾“å®Œæ¯•åï¼Œéœ€è¦æ‰§è¡Œçš„dataä¸­çš„å¤„ç†å‡½æ•°çš„å¥æŸ„
+     *                    // å¯é€‰
+     *                    // å‡½æ•°ä¼šæŒ‰ç…§ç»™å‡ºçš„å¥æŸ„é¡ºåºæ‰§è¡Œï¼Œå¹¶æä¾›ä¸€ä¸ª'next'å‡½æ•°å¥æŸ„å½“ä½œå‚æ•°
+     *                    // å¼€å‘è€…å¯ä½¿ç”¨'next'æ¥å†³å®šä½•æ—¶æ‰§è¡Œä¸‹ä¸€ä¸ªå‡½æ•°
+     *      message: function(data, event) {...} // workerçš„onmessage
+     *      error  : function(errorEvent) {...}  // workerçš„onerror
      *
      *
-     * @return {[Object]}         [½«µ±Ç°workerÊµÀı·µ»Ø]
+     * @return {[Object]}         [å°†å½“å‰workerå®ä¾‹è¿”å›]
      */
     function darkWalker(options) {
 
@@ -60,7 +60,7 @@
             return darkWalker(options);
         }
 
-        log('group', '\n[================== µ÷ÊÔĞÅÏ¢ ==================]\n');
+        log('group', '\n[================== è°ƒè¯•ä¿¡æ¯ ==================]\n');
 
         var worker = darkWalker.worker;
         var data = serializeData(options.data);
@@ -73,9 +73,9 @@
         });
 
         worker.onmessage = function(event) {
-            // log('\n[Ö÷Ïß³Ì½ÓÊÜµ½Êı¾İ£¬Êı¾İÎª£º]\n', event.data);
+            // log('\n[ä¸»çº¿ç¨‹æ¥å—åˆ°æ•°æ®ï¼Œæ•°æ®ä¸ºï¼š]\n', event.data);
 
-            log('group', '\n[Ö÷Ïß³Ì½ÓÊÜµ½Êı¾İ£¬Êı¾İÎª£º]\n');
+            log('group', '\n[ä¸»çº¿ç¨‹æ¥å—åˆ°æ•°æ®ï¼Œæ•°æ®ä¸ºï¼š]\n');
             log(event.data);
             log('groupEnd');
             log('groupEnd');
@@ -88,7 +88,7 @@
                 temp = {
                     key: temp[0],
                     value: temp[1] //,
-                        // type: temp[2]
+                    // type: temp[2]
                 }
 
                 // if (options.data[temp.key] !== undefined) {
@@ -100,7 +100,7 @@
         }
 
         worker.onerror = function(event) {
-            log('warn', '\n[Ö÷Ïß³ÌÓöµ½Òì³££¬Òì³£ĞÅÏ¢£º]\n', event.message);
+            log('warn', '\n[ä¸»çº¿ç¨‹é‡åˆ°å¼‚å¸¸ï¼Œå¼‚å¸¸ä¿¡æ¯ï¼š]\n', event.message);
             log('groupEnd');
             options.error && options.error.call(this, event);
             event.preventDefault();
@@ -112,13 +112,13 @@
     };
 
     /**
-     * [ĞòÁĞ»¯Êı¾İ]
-     * ÒòÎª´«ÊäµÄdataÖĞÈç¹ûÓĞº¯Êı±í´ïÊ½£¬
-     * worker»á±¨´í£»
-     * Èç¹ûÊ¹ÓÃJSON.stringifyÖ±½ÓĞòÁĞ»¯
-     * º¯Êı±í´ïÊ½Ôò»á¶ªÊ§
-     * @param  {[Object]} data [ĞèÒªĞòÁĞ»¯µÄÊı¾İ]
-     * @return {[String]}      [ĞòÁĞ»¯ºóµÄÊı¾İ]
+     * [åºåˆ—åŒ–æ•°æ®]
+     * å› ä¸ºä¼ è¾“çš„dataä¸­å¦‚æœæœ‰å‡½æ•°è¡¨è¾¾å¼ï¼Œ
+     * workerä¼šæŠ¥é”™ï¼›
+     * å¦‚æœä½¿ç”¨JSON.stringifyç›´æ¥åºåˆ—åŒ–
+     * å‡½æ•°è¡¨è¾¾å¼åˆ™ä¼šä¸¢å¤±
+     * @param  {[Object]} data [éœ€è¦åºåˆ—åŒ–çš„æ•°æ®]
+     * @return {[String]}      [åºåˆ—åŒ–åçš„æ•°æ®]
      */
     function serializeData(data) {
 
@@ -140,24 +140,24 @@
     };
 
     /**
-     * [Æô¶¯onmessge²¶»ñ]
+     * [å¯åŠ¨onmessgeæ•è·]
      */
     function eventCatcher() {
         return onmessage = function(event) {
-            log('\n[ÔÚ×ÓÏß³ÌÄÚ½ÓÊÕµ½Êı¾İ£¬Êı¾İÎª]£º\n', event.data);
+            log('\n[åœ¨å­çº¿ç¨‹å†…æ¥æ”¶åˆ°æ•°æ®ï¼Œæ•°æ®ä¸º]ï¼š\n', event.data);
 
             var options = event.data;
             var data = deSerialize(options.data);
             var fns = [];
 
-            // ÒıÈëÒÀÀµ
+            // å¼•å…¥ä¾èµ–
             if (options.deps.length) {
                 importScripts.apply(self, options.deps);
             }
 
-            // 
-            // <del>Èç¹ûÃ»ÓĞÌá¹©ĞèÒªÖ´ĞĞµÄº¯Êı¾ä±ú£¬Ä¬ÈÏÈ«²¿Ö´ĞĞ</del>
-            // update note£ºÕâ¸ö¹¦ÄÜÃ»Ê²Ã´ÓÃ£¬È¥µô
+            //
+            // <del>å¦‚æœæ²¡æœ‰æä¾›éœ€è¦æ‰§è¡Œçš„å‡½æ•°å¥æŸ„ï¼Œé»˜è®¤å…¨éƒ¨æ‰§è¡Œ</del>
+            // update noteï¼šè¿™ä¸ªåŠŸèƒ½æ²¡ä»€ä¹ˆç”¨ï¼Œå»æ‰
             // if (!options.performs.length) {
             //     options.performs = Object.keys(data).filter(function(key) {
             //         var temp = data[key];
@@ -172,7 +172,7 @@
                 temp && fns.push(temp);
             });
 
-            // 
+            //
             if (options.observe.length) {
                 options.observe.forEach(function(originalProp) {
                     var key = originalProp;
@@ -202,14 +202,14 @@
     };
 
     /**
-     * [¶ÔÒÑ¾­ĞòÁĞ»¯µÄÊı¾İ½âÂë]
-     * Ö÷Òª¶Ôº¯Êı½øĞĞ½âÂë²Ù×÷£¬°ó¶¨ÕıÈ·µÄ×÷ÓÃÓò¡£
-     * @param  {[String]} dataString [ĞòÁĞ»¯µÄ×Ö·û´®]
-     * @return {[Object]}            [½âÂëºóµÄ¶ÔÏó×ÖÃæÁ¿]
+     * [å¯¹å·²ç»åºåˆ—åŒ–çš„æ•°æ®è§£ç ]
+     * ä¸»è¦å¯¹å‡½æ•°è¿›è¡Œè§£ç æ“ä½œï¼Œç»‘å®šæ­£ç¡®çš„ä½œç”¨åŸŸã€‚
+     * @param  {[String]} dataString [åºåˆ—åŒ–çš„å­—ç¬¦ä¸²]
+     * @return {[Object]}            [è§£ç åçš„å¯¹è±¡å­—é¢é‡]
      */
     function deSerialize(dataString) {
         var data = JSON.parse(dataString);
-        // ±£Ö¤Ã¶¾ÙÊ±¼üÖµ¶ÔÊÇÓĞĞòµÄ
+        // ä¿è¯æšä¸¾æ—¶é”®å€¼å¯¹æ˜¯æœ‰åºçš„
         var keys = Object.keys(data);
         var temp;
         keys.forEach(function(key) {
@@ -230,9 +230,9 @@
     };
 
     /**
-     * [¶ÓÁĞº¯Êı]
-     * @param  {[Array]} fns     [º¯Êı¶ÓÁĞ]
-     * @param  {[Object]} context [º¯ÊıµÄÖ´ĞĞÉÏÏÂÎÄ]
+     * [é˜Ÿåˆ—å‡½æ•°]
+     * @param  {[Array]} fns     [å‡½æ•°é˜Ÿåˆ—]
+     * @param  {[Object]} context [å‡½æ•°çš„æ‰§è¡Œä¸Šä¸‹æ–‡]
      */
     function queue(fns, context) {
         (function next() {
