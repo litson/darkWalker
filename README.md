@@ -25,7 +25,7 @@ Start a thread,let javascript runs in backgroud!
 
 ```
 
-### 多个函数？英文渣渣，Chinglish！
+
 
 ```js
 
